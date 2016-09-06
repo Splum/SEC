@@ -15,7 +15,7 @@ df <- df[c(4:nrow(df)),-2]
 df[,c(3:15)] <- as.numeric(gsub("\\(", "-", gsub("\\)|,", "", 
                 as.matrix(df[,c(3:15)]))))
 ## set NA = 0
-df[is.na(DF)] <- 0 
+df[is.na(df)] <- 0 
 ## setnames
 names(df) <- c("date","security","sum","fundbuy","fundsell","fundnet",
                "portbuy","portsell","portnet","custbuy","custsell","custnet",
@@ -36,8 +36,165 @@ SET50 <- df %>%
          custsentiment = (custbuy-custsell)/((custbuy+custsell)/2),
          foreignsentiment = (foreignbuy-foreignsell)/((foreignbuy+foreignsell)/2))
 
-write.csv(SET50, file="SET50.csv")
+#write.csv(SET50, file="SET50.csv")
 
 #############
 # SET51-100 #
 #############
+df <- read.csv(file="SET51100.csv", head=F, stringsAsFactors=F)
+df <- df[c(4:nrow(df)),-2]
+df[,c(3:15)] <- as.numeric(gsub("\\(", "-", gsub("\\)|,", "", 
+                as.matrix(df[,c(3:15)]))))
+df[is.na(df)] <- 0 
+names(df) <- c("date","security","sum","fundbuy","fundsell","fundnet",
+               "portbuy","portsell","portnet","custbuy","custsell","custnet",
+               "foreignbuy","foreignsell","foreignnet")
+
+df$Date <- as.Date(df$date, "%d/%m/%Y")
+df$month <- as.Date(cut(df$Date, breaks = "month"))  
+
+SET51100 <- df %>%
+  group_by(Date) %>%
+  summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
+            portbuy = sum(portbuy),portsell = sum(portsell),
+            custbuy = sum(custbuy),custsell = sum(custsell),
+            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell)) %>%
+  mutate(fundsentiment = (fundbuy-fundsell)/((fundbuy+fundsell)/2),
+         portsentiment = (portbuy-portsell)/((portbuy+portsell)/2),
+         custsentiment = (custbuy-custsell)/((custbuy+custsell)/2),
+         foreignsentiment = (foreignbuy-foreignsell)/((foreignbuy+foreignsell)/2))
+
+#write.csv(SET51100, file="SET51100.csv")
+
+##############
+#     DW     #
+##############
+df <- read.csv(file="DW.csv", head=F, stringsAsFactors=F)
+df <- df[c(4:nrow(df)),-2]
+df[,c(3:15)] <- as.numeric(gsub("\\(", "-", gsub("\\)|,", "", 
+                as.matrix(df[,c(3:15)]))))
+df[is.na(df)] <- 0 
+names(df) <- c("date","security","sum","fundbuy","fundsell","fundnet",
+               "portbuy","portsell","portnet","custbuy","custsell","custnet",
+               "foreignbuy","foreignsell","foreignnet")
+
+df$Date <- as.Date(df$date, "%d/%m/%Y")
+df$month <- as.Date(cut(df$Date, breaks = "month"))  
+
+DW <- df %>%
+  group_by(Date) %>%
+  summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
+            portbuy = sum(portbuy),portsell = sum(portsell),
+            custbuy = sum(custbuy),custsell = sum(custsell),
+            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell)) %>%
+  mutate(fundsentiment = (fundbuy-fundsell)/((fundbuy+fundsell)/2),
+         portsentiment = (portbuy-portsell)/((portbuy+portsell)/2),
+         custsentiment = (custbuy-custsell)/((custbuy+custsell)/2),
+         foreignsentiment = (foreignbuy-foreignsell)/((foreignbuy+foreignsell)/2))
+
+#write.csv(DW, file="DW.csv")
+
+
+###############
+# mai excl. W #
+###############
+df <- read.csv(file="mai.csv", head=F, stringsAsFactors=F)
+df <- df[c(4:nrow(df)),-2]
+df[,c(3:15)] <- as.numeric(gsub("\\(", "-", gsub("\\)|,", "", 
+                as.matrix(df[,c(3:15)]))))
+df[is.na(df)] <- 0 
+names(df) <- c("date","security","sum","fundbuy","fundsell","fundnet",
+               "portbuy","portsell","portnet","custbuy","custsell","custnet",
+               "foreignbuy","foreignsell","foreignnet")
+
+## excluding any rows with string '-W'
+selectedRows <- df[grep("-W",df$security,invert=T),]
+nrow(selectedRows) #check number of sample 
+MAI <- selectedRows  #rename
+
+MAI$Date <- as.Date(MAI$date, "%d/%m/%Y")
+MAI$month <- as.Date(cut(MAI$Date, breaks = "month"))  
+
+mai <- MAI %>%
+  group_by(Date) %>%
+  summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
+            portbuy = sum(portbuy),portsell = sum(portsell),
+            custbuy = sum(custbuy),custsell = sum(custsell),
+            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell)) %>%
+  mutate(fundsentiment = (fundbuy-fundsell)/((fundbuy+fundsell)/2),
+         portsentiment = (portbuy-portsell)/((portbuy+portsell)/2),
+         custsentiment = (custbuy-custsell)/((custbuy+custsell)/2),
+         foreignsentiment = (foreignbuy-foreignsell)/((foreignbuy+foreignsell)/2))
+
+#write.csv(mai, file="mai.csv")
+
+###############################
+#   Warrant (of SET and mai)  #
+###############################
+## 1. Find maiW (!making use of the output of previous section)
+## select any rows with string '-W'
+selectedRows <- df[grep("-W", df$security),]
+nrow(selectedRows) #check number of sample 
+MAIW <- selectedRows  #rename
+
+MAIW$Date <- as.Date(MAIW$date, "%d/%m/%Y")
+MAIW$month <- as.Date(cut(MAIW$Date, breaks = "month"))  
+
+maiW <- MAIW %>%
+  group_by(Date) %>%
+  summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
+            portbuy = sum(portbuy),portsell = sum(portsell),
+            custbuy = sum(custbuy),custsell = sum(custsell),
+            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell)) %>%
+  mutate(fundsentiment = (fundbuy-fundsell)/((fundbuy+fundsell)/2),
+         portsentiment = (portbuy-portsell)/((portbuy+portsell)/2),
+         custsentiment = (custbuy-custsell)/((custbuy+custsell)/2),
+         foreignsentiment = (foreignbuy-foreignsell)/((foreignbuy+foreignsell)/2))
+
+## 2. Find SETW
+df <- read.csv(file="nonSET100.csv", head=F, stringsAsFactors=F)
+df <- df[c(4:nrow(df)),-2]
+df[,c(3:15)] <- as.numeric(gsub("\\(", "-", gsub("\\)|,", "", 
+                as.matrix(df[,c(3:15)]))))
+df[is.na(df)] <- 0 
+names(df) <- c("date","security","sum","fundbuy","fundsell","fundnet",
+               "portbuy","portsell","portnet","custbuy","custsell","custnet",
+               "foreignbuy","foreignsell","foreignnet")
+
+## select any rows with string '-W'
+selectedRows <- df[grep("-W", df$security),]
+nrow(selectedRows) #check number of sample 
+setW <- selectedRows  #rename
+
+setW$Date <- as.Date(setW$date, "%d/%m/%Y")
+setW$month <- as.Date(cut(setW$Date, breaks = "month"))  
+
+SETW <- setW %>%
+  group_by(Date) %>%
+  summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
+            portbuy = sum(portbuy),portsell = sum(portsell),
+            custbuy = sum(custbuy),custsell = sum(custsell),
+            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell)) %>%
+  mutate(fundsentiment = (fundbuy-fundsell)/((fundbuy+fundsell)/2),
+         portsentiment = (portbuy-portsell)/((portbuy+portsell)/2),
+         custsentiment = (custbuy-custsell)/((custbuy+custsell)/2),
+         foreignsentiment = (foreignbuy-foreignsell)/((foreignbuy+foreignsell)/2))
+
+## 3. combine (sum matrix)
+
+W <- maiW + SETW
+
+# sum 2 dataframes OPTION1 with base R.. wide aggregation
+W <- cbind(maiW, SETW)
+sapply(unique(colnames(W)), 
+       function(x) rowSums(W[, colnames(W) == x, drop = FALSE]))
+
+# OPTION2 with reshape2
+W <- rbind(melt(maiW,id="security"),melt(SETW,id="security"))
+dcast(data=W,formula=site ~ variable,fun.aggregate=sum)
+
+#################
+#   SET101200   #
+#################
+# use byproduct of SETW code
+df <- 
