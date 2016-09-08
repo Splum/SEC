@@ -9,7 +9,7 @@ library(reshape2)
 #########
 # SET50 #
 #########
-df <- read.csv(file="SET50.csv", head=F, stringsAsFactors=F)
+df <- read.csv(file="SET50JunAug16.csv", head=F, stringsAsFactors=F)
 df <- df[c(4:nrow(df)),-2]
 ## convert columns to numeric
 df[,c(3:15)] <- as.numeric(gsub("\\(", "-", gsub("\\)|,", "", 
@@ -26,7 +26,7 @@ df$month <- as.Date(cut(df$Date, breaks = "month"))
 
 ## group mutate calculate
 SET50 <- df %>%
-  group_by(Date) %>%
+  group_by(month) %>%
   summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
             portbuy = sum(portbuy),portsell = sum(portsell),
             custbuy = sum(custbuy),custsell = sum(custsell),
@@ -41,7 +41,7 @@ SET50 <- df %>%
 #############
 # SET51-100 #
 #############
-df <- read.csv(file="SET51100.csv", head=F, stringsAsFactors=F)
+df <- read.csv(file="SET51100JunAug16.csv", head=F, stringsAsFactors=F)
 df <- df[c(4:nrow(df)),-2]
 df[,c(3:15)] <- as.numeric(gsub("\\(", "-", gsub("\\)|,", "", 
                 as.matrix(df[,c(3:15)]))))
@@ -54,7 +54,7 @@ df$Date <- as.Date(df$date, "%d/%m/%Y")
 df$month <- as.Date(cut(df$Date, breaks = "month"))  
 
 SET51100 <- df %>%
-  group_by(Date) %>%
+  group_by(month) %>%
   summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
             portbuy = sum(portbuy),portsell = sum(portsell),
             custbuy = sum(custbuy),custsell = sum(custsell),
@@ -69,7 +69,7 @@ SET51100 <- df %>%
 ##############
 #     DW     #
 ##############
-df <- read.csv(file="DW.csv", head=F, stringsAsFactors=F)
+df <- read.csv(file="DWJunAug16.csv", head=F, stringsAsFactors=F)
 df <- df[c(4:nrow(df)),-2]
 df[,c(3:15)] <- as.numeric(gsub("\\(", "-", gsub("\\)|,", "", 
                 as.matrix(df[,c(3:15)]))))
@@ -82,7 +82,7 @@ df$Date <- as.Date(df$date, "%d/%m/%Y")
 df$month <- as.Date(cut(df$Date, breaks = "month"))  
 
 DW <- df %>%
-  group_by(Date) %>%
+  group_by(month) %>%
   summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
             portbuy = sum(portbuy),portsell = sum(portsell),
             custbuy = sum(custbuy),custsell = sum(custsell),
@@ -98,7 +98,7 @@ DW <- df %>%
 ###############
 # mai excl. W #
 ###############
-df <- read.csv(file="mai.csv", head=F, stringsAsFactors=F)
+df <- read.csv(file="maiJunAug16.csv", head=F, stringsAsFactors=F)
 df <- df[c(4:nrow(df)),-2]
 df[,c(3:15)] <- as.numeric(gsub("\\(", "-", gsub("\\)|,", "", 
                 as.matrix(df[,c(3:15)]))))
@@ -116,7 +116,7 @@ MAI$Date <- as.Date(MAI$date, "%d/%m/%Y")
 MAI$month <- as.Date(cut(MAI$Date, breaks = "month"))  
 
 mai <- MAI %>%
-  group_by(Date) %>%
+  group_by(month) %>%
   summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
             portbuy = sum(portbuy),portsell = sum(portsell),
             custbuy = sum(custbuy),custsell = sum(custsell),
@@ -141,7 +141,7 @@ MAIW$Date <- as.Date(MAIW$date, "%d/%m/%Y")
 MAIW$month <- as.Date(cut(MAIW$Date, breaks = "month"))  
 
 maiW <- MAIW %>%
-  group_by(Date) %>%
+  group_by(month) %>%
   summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
             portbuy = sum(portbuy),portsell = sum(portsell),
             custbuy = sum(custbuy),custsell = sum(custsell),
@@ -152,7 +152,7 @@ maiW <- MAIW %>%
          foreignsentiment = (foreignbuy-foreignsell)/((foreignbuy+foreignsell)/2))
 
 ## 2. Find SETW
-df <- read.csv(file="nonSET100.csv", head=F, stringsAsFactors=F)
+df <- read.csv(file="nonSET100JunAug16.csv", head=F, stringsAsFactors=F)
 df <- df[c(4:nrow(df)),-2]
 df[,c(3:15)] <- as.numeric(gsub("\\(", "-", gsub("\\)|,", "", 
                 as.matrix(df[,c(3:15)]))))
@@ -170,7 +170,7 @@ setW$Date <- as.Date(setW$date, "%d/%m/%Y")
 setW$month <- as.Date(cut(setW$Date, breaks = "month"))  
 
 SETW <- setW %>%
-  group_by(Date) %>%
+  group_by(month) %>%
   summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
             portbuy = sum(portbuy),portsell = sum(portsell),
             custbuy = sum(custbuy),custsell = sum(custsell),
@@ -193,8 +193,152 @@ sapply(unique(colnames(W)),
 W <- rbind(melt(maiW,id="security"),melt(SETW,id="security"))
 dcast(data=W,formula=site ~ variable,fun.aggregate=sum)
 
-#################
-#   SET101200   #
-#################
-# use byproduct of SETW code
-df <- 
+########################################################
+#   SET101200 / nonSET200 / REITs&infra / -f by group  #
+########################################################
+# use byproduct of SETW code 'dw'file which is nonSET100
+# Step I : read list file which contains SET50, 51-100, 101-200, non200, REITs&Infra
+listSET101200 <- read_excel("list SETgroup.xlsx",3) #sheet 3> SET101-200
+listREITinfra <- read_excel("list SETgroup.xlsx",5) #sheet 5> REITs&Infra
+listSET50     <- read_excel("list SETgroup.xlsx",1) #sheet 1> SET50
+listSET51100  <- read_excel("list SETgroup.xlsx",2) #sheet 2> SET51-100
+
+#.... dfH2Y15 <- subset(df, Date >="2558-07-01" & Date <="2558-09-03")
+#.... dfHY15$security <- as.character(dfH2Y15$security)
+
+df$Date <- as.Date(df$date, "%d/%m/%Y")
+df$month <- as.Date(cut(df$Date, breaks = "month"))
+
+joinedSET101200 = merge(df,listSET101200, by.x="security", by.y="H2Y16")
+joinedSET101200 <- joinedSET101200[,c(1:17)]
+
+SET101200 <- joinedSET101200 %>%
+  group_by(month) %>%
+  summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
+            portbuy = sum(portbuy),portsell = sum(portsell),
+            custbuy = sum(custbuy),custsell = sum(custsell),
+            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell)) %>%
+  mutate(fundsentiment = (fundbuy-fundsell)/((fundbuy+fundsell)/2),
+         portsentiment = (portbuy-portsell)/((portbuy+portsell)/2),
+         custsentiment = (custbuy-custsell)/((custbuy+custsell)/2),
+         foreignsentiment = (foreignbuy-foreignsell)/((foreignbuy+foreignsell)/2))
+
+# REITs&infra ---------------------------------------------------------------------
+joinedREITinfra = merge(df,listREITinfra, by.x="security", by.y="SPECIAL")
+joinedREITinfra <- joinedREITinfra[,c(1:17)]
+
+REITinfra <- joinedREITinfra %>%
+  group_by(month) %>%
+  summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
+            portbuy = sum(portbuy),portsell = sum(portsell),
+            custbuy = sum(custbuy),custsell = sum(custsell),
+            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell)) %>%
+  mutate(fundsentiment = (fundbuy-fundsell)/((fundbuy+fundsell)/2),
+         portsentiment = (portbuy-portsell)/((portbuy+portsell)/2),
+         custsentiment = (custbuy-custsell)/((custbuy+custsell)/2),
+         foreignsentiment = (foreignbuy-foreignsell)/((foreignbuy+foreignsell)/2))
+
+# nonSET200 ---------------------------------------------------------------------
+## excluding any rows with string '-W'
+selectedRows <- df[grep("-W",df$security,invert=T),]
+nrow(selectedRows) #check number of sample 
+DF <- selectedRows  #rename
+
+DF <- DF[!(DF$security %in% listSET101200$H2Y16) & !(DF$security %in% listREITinfra$SPECIAL),] # DF equals nonSET200 + -f stock
+nrow(DF) #check number of rows
+
+## excluding -f
+selectedRows <- DF[grep("-F",DF$security,invert=T),]
+nrow(selectedRows) #check number of sample 
+nonset200 <- selectedRows
+
+nonSET200 <- nonset200 %>%
+  group_by(month) %>%
+  summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
+            portbuy = sum(portbuy),portsell = sum(portsell),
+            custbuy = sum(custbuy),custsell = sum(custsell),
+            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell)) %>%
+  mutate(fundsentiment = (fundbuy-fundsell)/((fundbuy+fundsell)/2),
+         portsentiment = (portbuy-portsell)/((portbuy+portsell)/2),
+         custsentiment = (custbuy-custsell)/((custbuy+custsell)/2),
+         foreignsentiment = (foreignbuy-foreignsell)/((foreignbuy+foreignsell)/2))
+
+# sort -F ---------------------------------------------------------------------
+selectedRows <- DF[grep("-F",DF$security),]
+nrow(selectedRows) #check number of sample 
+F <- selectedRows
+
+F$security<-gsub("-F", "", F$security, fixed=T) # remove '-F' from string
+#grouping
+SETf50     <- F[(F$security %in% listSET50$H2Y16),]
+SETf51100  <- F[(F$security %in% listSET51100$H2Y16),]
+SETf101200 <- F[(F$security %in% listSET101200$H2Y16),]
+REITinfraf <- F[(F$security %in% listREITinfra$SPECIAL),]
+nonSETf200 <- F[!(F$security %in% listSET50$H2Y16) & !(F$security %in% listSET51100$H2Y16) & 
+                !(F$security %in% listSET101200$H2Y16) & !(F$security %in% listREITinfra$SPECIAL),] # residual is nonSETf200
+
+fSET50 <- SETf50 %>%
+  group_by(month) %>%
+  summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
+            portbuy = sum(portbuy),portsell = sum(portsell),
+            custbuy = sum(custbuy),custsell = sum(custsell),
+            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell)) %>%
+  mutate(fundsentiment = (fundbuy-fundsell)/((fundbuy+fundsell)/2),
+         portsentiment = (portbuy-portsell)/((portbuy+portsell)/2),
+         custsentiment = (custbuy-custsell)/((custbuy+custsell)/2),
+         foreignsentiment = (foreignbuy-foreignsell)/((foreignbuy+foreignsell)/2))
+fSET51100 <- SETf51100 %>%
+  group_by(month) %>%
+  summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
+            portbuy = sum(portbuy),portsell = sum(portsell),
+            custbuy = sum(custbuy),custsell = sum(custsell),
+            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell)) %>%
+  mutate(fundsentiment = (fundbuy-fundsell)/((fundbuy+fundsell)/2),
+         portsentiment = (portbuy-portsell)/((portbuy+portsell)/2),
+         custsentiment = (custbuy-custsell)/((custbuy+custsell)/2),
+         foreignsentiment = (foreignbuy-foreignsell)/((foreignbuy+foreignsell)/2))
+fSET101200 <- SETf101200 %>%
+  group_by(month) %>%
+  summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
+            portbuy = sum(portbuy),portsell = sum(portsell),
+            custbuy = sum(custbuy),custsell = sum(custsell),
+            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell)) %>%
+  mutate(fundsentiment = (fundbuy-fundsell)/((fundbuy+fundsell)/2),
+         portsentiment = (portbuy-portsell)/((portbuy+portsell)/2),
+         custsentiment = (custbuy-custsell)/((custbuy+custsell)/2),
+         foreignsentiment = (foreignbuy-foreignsell)/((foreignbuy+foreignsell)/2))
+fnonSET200 <- nonSETf200 %>%
+  group_by(month) %>%
+  summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
+            portbuy = sum(portbuy),portsell = sum(portsell),
+            custbuy = sum(custbuy),custsell = sum(custsell),
+            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell)) %>%
+  mutate(fundsentiment = (fundbuy-fundsell)/((fundbuy+fundsell)/2),
+         portsentiment = (portbuy-portsell)/((portbuy+portsell)/2),
+         custsentiment = (custbuy-custsell)/((custbuy+custsell)/2),
+         foreignsentiment = (foreignbuy-foreignsell)/((foreignbuy+foreignsell)/2))
+fREITinfra <- REITinfraf %>%
+  group_by(month) %>%
+  summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
+            portbuy = sum(portbuy),portsell = sum(portsell),
+            custbuy = sum(custbuy),custsell = sum(custsell),
+            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell)) %>%
+  mutate(fundsentiment = (fundbuy-fundsell)/((fundbuy+fundsell)/2),
+         portsentiment = (portbuy-portsell)/((portbuy+portsell)/2),
+         custsentiment = (custbuy-custsell)/((custbuy+custsell)/2),
+         foreignsentiment = (foreignbuy-foreignsell)/((foreignbuy+foreignsell)/2))
+
+
+# FINALE combine files ---------------------------------------------------------------------
+# cbind(df1[1], df1[-1] + df2[-1]) # in case the data is vectorised and in the same order
+# if not.... cbind(df1[1], df1[, -1] + df2[match(df1$Type, df2$Type), -1])
+# alternatively....df1[order(df1[, 1]), -1] + df2[order(df2[, 1]), -1]
+
+totalSET50     <- cbind(SET50[1], SET50[-1] + fSET50[-1]) 
+totalSET51100  <- cbind(SET51100[1], SET51100[-1] + fSET51100[-1])
+totalSET101200 <- cbind(SET101200[1], SET101200[-1] + fSET101200[-1])
+totalnonSET200 <- cbind(nonSET200[1], nonSET200[-1] + fnonSET200[-1])
+totalREITinfra <- cbind(REITinfra[1], REITinfra[-1] + fREITinfra[-1])
+totalW         <- cbind(SETW[1], SETW[-1] + maiW[-1])
+
+#total <- rbind(totalSET50, totalSET51100, totalSET101200, totalnonSET200, totalREITinfra, totalW)
