@@ -180,18 +180,18 @@ SETW <- setW %>%
          custsentiment = (custbuy-custsell)/((custbuy+custsell)/2),
          foreignsentiment = (foreignbuy-foreignsell)/((foreignbuy+foreignsell)/2))
 
-## 3. combine (sum matrix)
+## 3. combine (sum matrix) see FINALE line 340
 
-W <- maiW + SETW
+#W <- maiW + SETW
 
 # sum 2 dataframes OPTION1 with base R.. wide aggregation
-W <- cbind(maiW, SETW)
-sapply(unique(colnames(W)), 
-       function(x) rowSums(W[, colnames(W) == x, drop = FALSE]))
+#W <- cbind(maiW, SETW)
+#sapply(unique(colnames(W)), 
+#       function(x) rowSums(W[, colnames(W) == x, drop = FALSE]))
 
 # OPTION2 with reshape2
-W <- rbind(melt(maiW,id="security"),melt(SETW,id="security"))
-dcast(data=W,formula=site ~ variable,fun.aggregate=sum)
+#W <- rbind(melt(maiW,id="security"),melt(SETW,id="security"))
+#dcast(data=W,formula=site ~ variable,fun.aggregate=sum)
 
 ########################################################
 #   SET101200 / nonSET200 / REITs&infra / -f by group  #
