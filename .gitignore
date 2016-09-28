@@ -27,10 +27,11 @@ df$month <- as.Date(cut(df$Date, breaks = "month"))
 ## group mutate calculate
 SET50 <- df %>%
   group_by(month) %>%
-  summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
-            portbuy = sum(portbuy),portsell = sum(portsell),
-            custbuy = sum(custbuy),custsell = sum(custsell),
-            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell)) %>%
+  summarise(totalvalue = sum(sum),
+            fundbuy = sum(fundbuy),fundsell = sum(fundsell),fundnet = sum(fundnet),
+            portbuy = sum(portbuy),portsell = sum(portsell),portnet = sum(portnet),
+            custbuy = sum(custbuy),custsell = sum(custsell),custnet = sum(custnet),
+            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell),foreignnet = sum(foreignnet)) %>%
   mutate(fundsentiment = (fundbuy-fundsell)/((fundbuy+fundsell)/2),
          portsentiment = (portbuy-portsell)/((portbuy+portsell)/2),
          custsentiment = (custbuy-custsell)/((custbuy+custsell)/2),
