@@ -24,6 +24,10 @@ names(df) <- c("date","security","sum","fundbuy","fundsell","fundnet",
 df$Date <- as.Date(df$date, "%d/%m/%Y")
 df$month <- as.Date(cut(df$Date, breaks = "month"))  
 
+## choose date range
+# datefn <- function(x,y){SETOct16[SETOct16$Date>=x & SETOct16$Date<=y, ]}
+# datefn(as.Date("2559-10-10"),as.Date("2559-10-10"))
+
 ## group mutate calculate
 SET50 <- df %>%
   group_by(month) %>%
