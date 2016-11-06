@@ -1,1 +1,1 @@
-
+readLines('d:/temp/arabic.txt',encoding='UTF-8')
