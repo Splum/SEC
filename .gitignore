@@ -10,14 +10,14 @@ library(reshape2)
 # SET50 #
 #########
 df <- read.csv(file="SET50JunAug16.csv", head=F, stringsAsFactors=F)
-df <- df[c(4:nrow(df)),-2]
+df <- df[c(4:nrow(df)),]
 ## convert columns to numeric
-df[,c(3:15)] <- as.numeric(gsub("\\(", "-", gsub("\\)|,", "", 
-                as.matrix(df[,c(3:15)]))))
+df[,c(4:16)] <- as.numeric(gsub("\\(", "-", gsub("\\)|,", "", 
+                as.matrix(df[,c(4:16)]))))
 ## set NA = 0
 df[is.na(df)] <- 0 
 ## setnames
-names(df) <- c("date","security","sum","fundbuy","fundsell","fundnet",
+names(df) <- c("date","code","security","sum","fundbuy","fundsell","fundnet",
                "portbuy","portsell","portnet","custbuy","custsell","custnet",
                "foreignbuy","foreignsell","foreignnet")
 ## assign date
@@ -51,7 +51,7 @@ df <- df[c(4:nrow(df)),-2]
 df[,c(3:15)] <- as.numeric(gsub("\\(", "-", gsub("\\)|,", "", 
                 as.matrix(df[,c(3:15)]))))
 df[is.na(df)] <- 0 
-names(df) <- c("date","security","sum","fundbuy","fundsell","fundnet",
+names(df) <- c("date","code","security","sum","fundbuy","fundsell","fundnet",
                "portbuy","portsell","portnet","custbuy","custsell","custnet",
                "foreignbuy","foreignsell","foreignnet")
 
@@ -60,14 +60,16 @@ df$month <- as.Date(cut(df$Date, breaks = "month"))
 
 SET51100 <- df %>%
   group_by(month) %>%
-  summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
-            portbuy = sum(portbuy),portsell = sum(portsell),
-            custbuy = sum(custbuy),custsell = sum(custsell),
-            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell)) %>%
+  summarise(totalvalue = sum(sum),
+            fundbuy = sum(fundbuy),fundsell = sum(fundsell),fundnet = sum(fundnet),
+            portbuy = sum(portbuy),portsell = sum(portsell),portnet = sum(portnet),
+            custbuy = sum(custbuy),custsell = sum(custsell),custnet = sum(custnet),
+            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell),foreignnet = sum(foreignnet)) %>%
   mutate(fundsentiment = (fundbuy-fundsell)/((fundbuy+fundsell)/2),
          portsentiment = (portbuy-portsell)/((portbuy+portsell)/2),
          custsentiment = (custbuy-custsell)/((custbuy+custsell)/2),
          foreignsentiment = (foreignbuy-foreignsell)/((foreignbuy+foreignsell)/2))
+
 
 #write.csv(SET51100, file="SET51100.csv")
 
@@ -88,10 +90,11 @@ df$month <- as.Date(cut(df$Date, breaks = "month"))
 
 DW <- df %>%
   group_by(month) %>%
-  summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
-            portbuy = sum(portbuy),portsell = sum(portsell),
-            custbuy = sum(custbuy),custsell = sum(custsell),
-            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell)) %>%
+  summarise(totalvalue = sum(sum),
+            fundbuy = sum(fundbuy),fundsell = sum(fundsell),fundnet = sum(fundnet),
+            portbuy = sum(portbuy),portsell = sum(portsell),portnet = sum(portnet),
+            custbuy = sum(custbuy),custsell = sum(custsell),custnet = sum(custnet),
+            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell),foreignnet = sum(foreignnet)) %>%
   mutate(fundsentiment = (fundbuy-fundsell)/((fundbuy+fundsell)/2),
          portsentiment = (portbuy-portsell)/((portbuy+portsell)/2),
          custsentiment = (custbuy-custsell)/((custbuy+custsell)/2),
@@ -122,14 +125,16 @@ MAI$month <- as.Date(cut(MAI$Date, breaks = "month"))
 
 mai <- MAI %>%
   group_by(month) %>%
-  summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
-            portbuy = sum(portbuy),portsell = sum(portsell),
-            custbuy = sum(custbuy),custsell = sum(custsell),
-            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell)) %>%
+  summarise(totalvalue = sum(sum),
+            fundbuy = sum(fundbuy),fundsell = sum(fundsell),fundnet = sum(fundnet),
+            portbuy = sum(portbuy),portsell = sum(portsell),portnet = sum(portnet),
+            custbuy = sum(custbuy),custsell = sum(custsell),custnet = sum(custnet),
+            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell),foreignnet = sum(foreignnet)) %>%
   mutate(fundsentiment = (fundbuy-fundsell)/((fundbuy+fundsell)/2),
          portsentiment = (portbuy-portsell)/((portbuy+portsell)/2),
          custsentiment = (custbuy-custsell)/((custbuy+custsell)/2),
          foreignsentiment = (foreignbuy-foreignsell)/((foreignbuy+foreignsell)/2))
+
 
 #write.csv(mai, file="mai.csv")
 
@@ -147,14 +152,16 @@ MAIW$month <- as.Date(cut(MAIW$Date, breaks = "month"))
 
 maiW <- MAIW %>%
   group_by(month) %>%
-  summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
-            portbuy = sum(portbuy),portsell = sum(portsell),
-            custbuy = sum(custbuy),custsell = sum(custsell),
-            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell)) %>%
+  summarise(totalvalue = sum(sum),
+            fundbuy = sum(fundbuy),fundsell = sum(fundsell),fundnet = sum(fundnet),
+            portbuy = sum(portbuy),portsell = sum(portsell),portnet = sum(portnet),
+            custbuy = sum(custbuy),custsell = sum(custsell),custnet = sum(custnet),
+            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell),foreignnet = sum(foreignnet)) %>%
   mutate(fundsentiment = (fundbuy-fundsell)/((fundbuy+fundsell)/2),
          portsentiment = (portbuy-portsell)/((portbuy+portsell)/2),
          custsentiment = (custbuy-custsell)/((custbuy+custsell)/2),
          foreignsentiment = (foreignbuy-foreignsell)/((foreignbuy+foreignsell)/2))
+
 
 ## 2. Find SETW
 df <- read.csv(file="nonSET100JunAug16.csv", head=F, stringsAsFactors=F)
@@ -176,14 +183,16 @@ setW$month <- as.Date(cut(setW$Date, breaks = "month"))
 
 SETW <- setW %>%
   group_by(month) %>%
-  summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
-            portbuy = sum(portbuy),portsell = sum(portsell),
-            custbuy = sum(custbuy),custsell = sum(custsell),
-            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell)) %>%
+  summarise(totalvalue = sum(sum),
+            fundbuy = sum(fundbuy),fundsell = sum(fundsell),fundnet = sum(fundnet),
+            portbuy = sum(portbuy),portsell = sum(portsell),portnet = sum(portnet),
+            custbuy = sum(custbuy),custsell = sum(custsell),custnet = sum(custnet),
+            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell),foreignnet = sum(foreignnet)) %>%
   mutate(fundsentiment = (fundbuy-fundsell)/((fundbuy+fundsell)/2),
          portsentiment = (portbuy-portsell)/((portbuy+portsell)/2),
          custsentiment = (custbuy-custsell)/((custbuy+custsell)/2),
          foreignsentiment = (foreignbuy-foreignsell)/((foreignbuy+foreignsell)/2))
+
 
 ## 3. combine (sum matrix) see FINALE line 340
 
@@ -204,7 +213,7 @@ SETW <- setW %>%
 # use byproduct of SETW code 'dw'file which is nonSET100
 # Step I : read list file which contains SET50, 51-100, 101-200, non200, REITs&Infra
 listSET101200 <- read_excel("list SETgroup.xlsx",3) #sheet 3> SET101-200
-listREITinfra <- read_excel("list SETgroup.xlsx",5) #sheet 5> REITs&Infra
+listREITinfra <- read_excel("list SETgroup.xlsx",4) #sheet 5> REITs&Infra
 listSET50     <- read_excel("list SETgroup.xlsx",1) #sheet 1> SET50
 listSET51100  <- read_excel("list SETgroup.xlsx",2) #sheet 2> SET51-100
 
@@ -215,29 +224,31 @@ df$Date <- as.Date(df$date, "%d/%m/%Y")
 df$month <- as.Date(cut(df$Date, breaks = "month"))
 
 joinedSET101200 = merge(df,listSET101200, by.x="security", by.y="H2Y16")
-joinedSET101200 <- joinedSET101200[,c(1:17)]
+joinedSET101200 <- joinedSET101200[,c(1:18)]
 
 SET101200 <- joinedSET101200 %>%
   group_by(month) %>%
-  summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
-            portbuy = sum(portbuy),portsell = sum(portsell),
-            custbuy = sum(custbuy),custsell = sum(custsell),
-            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell)) %>%
+  summarise(totalvalue = sum(sum),
+            fundbuy = sum(fundbuy),fundsell = sum(fundsell),fundnet = sum(fundnet),
+            portbuy = sum(portbuy),portsell = sum(portsell),portnet = sum(portnet),
+            custbuy = sum(custbuy),custsell = sum(custsell),custnet = sum(custnet),
+            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell),foreignnet = sum(foreignnet)) %>%
   mutate(fundsentiment = (fundbuy-fundsell)/((fundbuy+fundsell)/2),
          portsentiment = (portbuy-portsell)/((portbuy+portsell)/2),
          custsentiment = (custbuy-custsell)/((custbuy+custsell)/2),
          foreignsentiment = (foreignbuy-foreignsell)/((foreignbuy+foreignsell)/2))
-
+         
 # REITs&infra ---------------------------------------------------------------------
 joinedREITinfra = merge(df,listREITinfra, by.x="security", by.y="SPECIAL")
-joinedREITinfra <- joinedREITinfra[,c(1:17)]
+joinedREITinfra <- joinedREITinfra[,c(1:18)]
 
 REITinfra <- joinedREITinfra %>%
   group_by(month) %>%
-  summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
-            portbuy = sum(portbuy),portsell = sum(portsell),
-            custbuy = sum(custbuy),custsell = sum(custsell),
-            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell)) %>%
+  summarise(totalvalue = sum(sum),
+            fundbuy = sum(fundbuy),fundsell = sum(fundsell),fundnet = sum(fundnet),
+            portbuy = sum(portbuy),portsell = sum(portsell),portnet = sum(portnet),
+            custbuy = sum(custbuy),custsell = sum(custsell),custnet = sum(custnet),
+            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell),foreignnet = sum(foreignnet)) %>%
   mutate(fundsentiment = (fundbuy-fundsell)/((fundbuy+fundsell)/2),
          portsentiment = (portbuy-portsell)/((portbuy+portsell)/2),
          custsentiment = (custbuy-custsell)/((custbuy+custsell)/2),
@@ -259,10 +270,11 @@ nonset200 <- selectedRows
 
 nonSET200 <- nonset200 %>%
   group_by(month) %>%
-  summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
-            portbuy = sum(portbuy),portsell = sum(portsell),
-            custbuy = sum(custbuy),custsell = sum(custsell),
-            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell)) %>%
+  summarise(totalvalue = sum(sum),
+            fundbuy = sum(fundbuy),fundsell = sum(fundsell),fundnet = sum(fundnet),
+            portbuy = sum(portbuy),portsell = sum(portsell),portnet = sum(portnet),
+            custbuy = sum(custbuy),custsell = sum(custsell),custnet = sum(custnet),
+            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell),foreignnet = sum(foreignnet)) %>%
   mutate(fundsentiment = (fundbuy-fundsell)/((fundbuy+fundsell)/2),
          portsentiment = (portbuy-portsell)/((portbuy+portsell)/2),
          custsentiment = (custbuy-custsell)/((custbuy+custsell)/2),
@@ -284,54 +296,64 @@ nonSETf200 <- F[!(F$security %in% listSET50$H2Y16) & !(F$security %in% listSET51
 
 fSET50 <- SETf50 %>%
   group_by(month) %>%
-  summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
-            portbuy = sum(portbuy),portsell = sum(portsell),
-            custbuy = sum(custbuy),custsell = sum(custsell),
-            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell)) %>%
+  summarise(totalvalue = sum(sum),
+            fundbuy = sum(fundbuy),fundsell = sum(fundsell),fundnet = sum(fundnet),
+            portbuy = sum(portbuy),portsell = sum(portsell),portnet = sum(portnet),
+            custbuy = sum(custbuy),custsell = sum(custsell),custnet = sum(custnet),
+            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell),foreignnet = sum(foreignnet)) %>%
   mutate(fundsentiment = (fundbuy-fundsell)/((fundbuy+fundsell)/2),
          portsentiment = (portbuy-portsell)/((portbuy+portsell)/2),
          custsentiment = (custbuy-custsell)/((custbuy+custsell)/2),
          foreignsentiment = (foreignbuy-foreignsell)/((foreignbuy+foreignsell)/2))
+
 fSET51100 <- SETf51100 %>%
   group_by(month) %>%
-  summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
-            portbuy = sum(portbuy),portsell = sum(portsell),
-            custbuy = sum(custbuy),custsell = sum(custsell),
-            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell)) %>%
+  summarise(totalvalue = sum(sum),
+            fundbuy = sum(fundbuy),fundsell = sum(fundsell),fundnet = sum(fundnet),
+            portbuy = sum(portbuy),portsell = sum(portsell),portnet = sum(portnet),
+            custbuy = sum(custbuy),custsell = sum(custsell),custnet = sum(custnet),
+            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell),foreignnet = sum(foreignnet)) %>%
   mutate(fundsentiment = (fundbuy-fundsell)/((fundbuy+fundsell)/2),
          portsentiment = (portbuy-portsell)/((portbuy+portsell)/2),
          custsentiment = (custbuy-custsell)/((custbuy+custsell)/2),
          foreignsentiment = (foreignbuy-foreignsell)/((foreignbuy+foreignsell)/2))
+
 fSET101200 <- SETf101200 %>%
   group_by(month) %>%
-  summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
-            portbuy = sum(portbuy),portsell = sum(portsell),
-            custbuy = sum(custbuy),custsell = sum(custsell),
-            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell)) %>%
+  summarise(totalvalue = sum(sum),
+            fundbuy = sum(fundbuy),fundsell = sum(fundsell),fundnet = sum(fundnet),
+            portbuy = sum(portbuy),portsell = sum(portsell),portnet = sum(portnet),
+            custbuy = sum(custbuy),custsell = sum(custsell),custnet = sum(custnet),
+            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell),foreignnet = sum(foreignnet)) %>%
   mutate(fundsentiment = (fundbuy-fundsell)/((fundbuy+fundsell)/2),
          portsentiment = (portbuy-portsell)/((portbuy+portsell)/2),
          custsentiment = (custbuy-custsell)/((custbuy+custsell)/2),
          foreignsentiment = (foreignbuy-foreignsell)/((foreignbuy+foreignsell)/2))
+
 fnonSET200 <- nonSETf200 %>%
   group_by(month) %>%
-  summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
-            portbuy = sum(portbuy),portsell = sum(portsell),
-            custbuy = sum(custbuy),custsell = sum(custsell),
-            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell)) %>%
+  summarise(totalvalue = sum(sum),
+            fundbuy = sum(fundbuy),fundsell = sum(fundsell),fundnet = sum(fundnet),
+            portbuy = sum(portbuy),portsell = sum(portsell),portnet = sum(portnet),
+            custbuy = sum(custbuy),custsell = sum(custsell),custnet = sum(custnet),
+            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell),foreignnet = sum(foreignnet)) %>%
   mutate(fundsentiment = (fundbuy-fundsell)/((fundbuy+fundsell)/2),
          portsentiment = (portbuy-portsell)/((portbuy+portsell)/2),
          custsentiment = (custbuy-custsell)/((custbuy+custsell)/2),
          foreignsentiment = (foreignbuy-foreignsell)/((foreignbuy+foreignsell)/2))
+
 fREITinfra <- REITinfraf %>%
   group_by(month) %>%
-  summarise(fundbuy = sum(fundbuy),fundsell = sum(fundsell),
-            portbuy = sum(portbuy),portsell = sum(portsell),
-            custbuy = sum(custbuy),custsell = sum(custsell),
-            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell)) %>%
+  summarise(totalvalue = sum(sum),
+            fundbuy = sum(fundbuy),fundsell = sum(fundsell),fundnet = sum(fundnet),
+            portbuy = sum(portbuy),portsell = sum(portsell),portnet = sum(portnet),
+            custbuy = sum(custbuy),custsell = sum(custsell),custnet = sum(custnet),
+            foreignbuy = sum(foreignbuy),foreignsell = sum(foreignsell),foreignnet = sum(foreignnet)) %>%
   mutate(fundsentiment = (fundbuy-fundsell)/((fundbuy+fundsell)/2),
          portsentiment = (portbuy-portsell)/((portbuy+portsell)/2),
          custsentiment = (custbuy-custsell)/((custbuy+custsell)/2),
          foreignsentiment = (foreignbuy-foreignsell)/((foreignbuy+foreignsell)/2))
+
 
 
 # FINALE combine files ---------------------------------------------------------------------
