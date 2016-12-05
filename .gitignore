@@ -47,7 +47,7 @@ SET50 <- df %>%
 # SET51-100 #
 #############
 df <- read.csv(file="SET51100JunAug16.csv", head=F, stringsAsFactors=F)
-df <- df[c(4:nrow(df)),-2]
+df <- df[c(4:nrow(df)),]
 df[,c(4:16)] <- as.numeric(gsub("\\(", "-", gsub("\\)|,", "", 
                 as.matrix(df[,c(4:16)]))))
 df[is.na(df)] <- 0 
@@ -77,7 +77,7 @@ SET51100 <- df %>%
 #     DW     #
 ##############
 df <- read.csv(file="DWJunAug16.csv", head=F, stringsAsFactors=F)
-df <- df[c(4:nrow(df)),-2]
+df <- df[c(4:nrow(df)),]
 df[,c(4:16)] <- as.numeric(gsub("\\(", "-", gsub("\\)|,", "", 
                 as.matrix(df[,c(4:16)]))))
 df[is.na(df)] <- 0 
@@ -107,7 +107,7 @@ DW <- df %>%
 # mai excl. W #
 ###############
 df <- read.csv(file="maiJunAug16.csv", head=F, stringsAsFactors=F)
-df <- df[c(4:nrow(df)),-2]
+df <- df[c(4:nrow(df)),]
 df[,c(4:16)] <- as.numeric(gsub("\\(", "-", gsub("\\)|,", "", 
                 as.matrix(df[,c(4:16)]))))
 df[is.na(df)] <- 0 
@@ -165,7 +165,7 @@ maiW <- MAIW %>%
 
 ## 2. Find SETW
 df <- read.csv(file="nonSET100JunAug16.csv", head=F, stringsAsFactors=F)
-df <- df[c(4:nrow(df)),-2]
+df <- df[c(4:nrow(df)),]
 df[,c(4:16)] <- as.numeric(gsub("\\(", "-", gsub("\\)|,", "", 
                 as.matrix(df[,c(4:16)]))))
 df[is.na(df)] <- 0 
