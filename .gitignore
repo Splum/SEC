@@ -48,8 +48,8 @@ SET50 <- df %>%
 #############
 df <- read.csv(file="SET51100JunAug16.csv", head=F, stringsAsFactors=F)
 df <- df[c(4:nrow(df)),-2]
-df[,c(3:15)] <- as.numeric(gsub("\\(", "-", gsub("\\)|,", "", 
-                as.matrix(df[,c(3:15)]))))
+df[,c(4:16)] <- as.numeric(gsub("\\(", "-", gsub("\\)|,", "", 
+                as.matrix(df[,c(4:16)]))))
 df[is.na(df)] <- 0 
 names(df) <- c("date","code","security","sum","fundbuy","fundsell","fundnet",
                "portbuy","portsell","portnet","custbuy","custsell","custnet",
@@ -78,10 +78,10 @@ SET51100 <- df %>%
 ##############
 df <- read.csv(file="DWJunAug16.csv", head=F, stringsAsFactors=F)
 df <- df[c(4:nrow(df)),-2]
-df[,c(3:15)] <- as.numeric(gsub("\\(", "-", gsub("\\)|,", "", 
-                as.matrix(df[,c(3:15)]))))
+df[,c(4:16)] <- as.numeric(gsub("\\(", "-", gsub("\\)|,", "", 
+                as.matrix(df[,c(4:16)]))))
 df[is.na(df)] <- 0 
-names(df) <- c("date","security","sum","fundbuy","fundsell","fundnet",
+names(df) <- c("date","code","security","sum","fundbuy","fundsell","fundnet",
                "portbuy","portsell","portnet","custbuy","custsell","custnet",
                "foreignbuy","foreignsell","foreignnet")
 
@@ -108,10 +108,10 @@ DW <- df %>%
 ###############
 df <- read.csv(file="maiJunAug16.csv", head=F, stringsAsFactors=F)
 df <- df[c(4:nrow(df)),-2]
-df[,c(3:15)] <- as.numeric(gsub("\\(", "-", gsub("\\)|,", "", 
-                as.matrix(df[,c(3:15)]))))
+df[,c(4:16)] <- as.numeric(gsub("\\(", "-", gsub("\\)|,", "", 
+                as.matrix(df[,c(4:16)]))))
 df[is.na(df)] <- 0 
-names(df) <- c("date","security","sum","fundbuy","fundsell","fundnet",
+names(df) <- c("date","code","security","sum","fundbuy","fundsell","fundnet",
                "portbuy","portsell","portnet","custbuy","custsell","custnet",
                "foreignbuy","foreignsell","foreignnet")
 
@@ -166,10 +166,10 @@ maiW <- MAIW %>%
 ## 2. Find SETW
 df <- read.csv(file="nonSET100JunAug16.csv", head=F, stringsAsFactors=F)
 df <- df[c(4:nrow(df)),-2]
-df[,c(3:15)] <- as.numeric(gsub("\\(", "-", gsub("\\)|,", "", 
-                as.matrix(df[,c(3:15)]))))
+df[,c(4:16)] <- as.numeric(gsub("\\(", "-", gsub("\\)|,", "", 
+                as.matrix(df[,c(4:16)]))))
 df[is.na(df)] <- 0 
-names(df) <- c("date","security","sum","fundbuy","fundsell","fundnet",
+names(df) <- c("date","code","security","sum","fundbuy","fundsell","fundnet",
                "portbuy","portsell","portnet","custbuy","custsell","custnet",
                "foreignbuy","foreignsell","foreignnet")
 
