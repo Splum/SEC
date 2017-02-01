@@ -9,7 +9,7 @@ library(reshape2)
 #########
 # SET50 #
 #########
-df <- read.csv(file="SET50JunAug16.csv", head=F, stringsAsFactors=F)
+df <- read.csv(file="SET50.csv", head=F, stringsAsFactors=F)
 df <- df[c(4:nrow(df)),]
 ## convert columns to numeric
 df[,c(4:16)] <- as.numeric(gsub("\\(", "-", gsub("\\)|,", "", 
@@ -46,7 +46,7 @@ SET50 <- df %>%
 #############
 # SET51-100 #
 #############
-df <- read.csv(file="SET51100JunAug16.csv", head=F, stringsAsFactors=F)
+df <- read.csv(file="SET51100.csv", head=F, stringsAsFactors=F)
 df <- df[c(4:nrow(df)),]
 df[,c(4:16)] <- as.numeric(gsub("\\(", "-", gsub("\\)|,", "", 
                 as.matrix(df[,c(4:16)]))))
@@ -76,7 +76,7 @@ SET51100 <- df %>%
 ##############
 #     DW     #
 ##############
-df <- read.csv(file="DWJunAug16.csv", head=F, stringsAsFactors=F)
+df <- read.csv(file="DW.csv", head=F, stringsAsFactors=F)
 df <- df[c(4:nrow(df)),]
 df[,c(4:16)] <- as.numeric(gsub("\\(", "-", gsub("\\)|,", "", 
                 as.matrix(df[,c(4:16)]))))
@@ -106,7 +106,7 @@ DW <- df %>%
 ###############
 # mai excl. W #
 ###############
-df <- read.csv(file="maiJunAug16.csv", head=F, stringsAsFactors=F)
+df <- read.csv(file="mai.csv", head=F, stringsAsFactors=F)
 df <- df[c(4:nrow(df)),]
 df[,c(4:16)] <- as.numeric(gsub("\\(", "-", gsub("\\)|,", "", 
                 as.matrix(df[,c(4:16)]))))
@@ -164,7 +164,7 @@ maiW <- MAIW %>%
 
 
 ## 2. Find SETW
-df <- read.csv(file="nonSET100JunAug16.csv", head=F, stringsAsFactors=F)
+df <- read.csv(file="nonSET100.csv", head=F, stringsAsFactors=F)
 df <- df[c(4:nrow(df)),]
 df[,c(4:16)] <- as.numeric(gsub("\\(", "-", gsub("\\)|,", "", 
                 as.matrix(df[,c(4:16)]))))
