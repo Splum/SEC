@@ -212,10 +212,10 @@ SETW <- setW %>%
 ########################################################
 # use byproduct of SETW code 'dw'file which is nonSET100
 # Step I : read list file which contains SET50, 51-100, 101-200, non200, REITs&Infra
-listSET101200 <- read_excel("list SETgroup.xlsx",3) #sheet 3> SET101-200
-listREITinfra <- read_excel("list SETgroup.xlsx",4) #sheet 5> REITs&Infra
-listSET50     <- read_excel("list SETgroup.xlsx",1) #sheet 1> SET50
-listSET51100  <- read_excel("list SETgroup.xlsx",2) #sheet 2> SET51-100
+listSET101200 <- read_excel("list SETgroup code.xlsx",3) #sheet 3> SET101-200
+listREITinfra <- read_excel("list SETgroup code.xlsx",4) #sheet 5> REITs&Infra
+listSET50     <- read_excel("list SETgroup code.xlsx",1) #sheet 1> SET50
+listSET51100  <- read_excel("list SETgroup code.xlsx",2) #sheet 2> SET51-100
 
 #.... dfH2Y15 <- subset(df, Date >="2558-07-01" & Date <="2558-09-03")
 #.... dfHY15$security <- as.character(dfH2Y15$security)
@@ -223,7 +223,8 @@ listSET51100  <- read_excel("list SETgroup.xlsx",2) #sheet 2> SET51-100
 df$Date <- as.Date(df$date, "%d/%m/%Y")
 df$month <- as.Date(cut(df$Date, breaks = "month"))
 
-joinedSET101200 = merge(df,listSET101200, by.x="security", by.y="H2Y16")
+df$code <- as.numeric(as.character(df$code))
+joinedSET101200 = merge(df,listSET101200, by.x="code", by.y="H1Y17")
 joinedSET101200 <- joinedSET101200[,c(1:18)]
 
 SET101200 <- joinedSET101200 %>%
@@ -260,7 +261,9 @@ selectedRows <- df[grep("-W",df$security,invert=T),]
 nrow(selectedRows) #check number of sample 
 DF <- selectedRows  #rename
 
-DF <- DF[!(DF$security %in% listSET101200$H2Y16) & !(DF$security %in% listREITinfra$SPECIAL),] # DF equals nonSET200 + -f stock
+DF$code <- as.numeric(as.character(DF$code))
+
+DF <- DF[!(DF$code %in% listSET101200$H1Y17) & !(DF$security %in% listREITinfra$SPECIAL),] # DF equals nonSET200 + -f stock
 nrow(DF) #check number of rows
 
 ## excluding -f
@@ -286,13 +289,15 @@ nrow(selectedRows) #check number of sample
 F <- selectedRows
 
 F$security<-gsub("-F", "", F$security, fixed=T) # remove '-F' from string
+F$code <- as.numeric(as.character(F$code))
+F$codef <- F$code-1  ## foreign share code = normal code +1
 #grouping
-SETf50     <- F[(F$security %in% listSET50$H2Y16),]
-SETf51100  <- F[(F$security %in% listSET51100$H2Y16),]
-SETf101200 <- F[(F$security %in% listSET101200$H2Y16),]
+SETf50     <- F[(F$codef %in% listSET50$H1Y17),]
+SETf51100  <- F[(F$codef %in% listSET51100$H1Y17),]
+SETf101200 <- F[(F$codef %in% listSET101200$H1Y17),]
 REITinfraf <- F[(F$security %in% listREITinfra$SPECIAL),]
-nonSETf200 <- F[!(F$security %in% listSET50$H2Y16) & !(F$security %in% listSET51100$H2Y16) & 
-                !(F$security %in% listSET101200$H2Y16) & !(F$security %in% listREITinfra$SPECIAL),] # residual is nonSETf200
+nonSETf200 <- F[!(F$codef %in% listSET50$H1Y17) & !(F$codef %in% listSET51100$H1Y17) & 
+                !(F$codef %in% listSET101200$H1Y17) & !(F$security %in% listREITinfra$SPECIAL),] # residual is nonSETf200
 
 fSET50 <- SETf50 %>%
   group_by(month) %>%
