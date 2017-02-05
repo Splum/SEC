@@ -17,5 +17,7 @@ wf[,3] <- as.numeric(as.character(unlist(wf[,3])))  #assign column class
 wf[,2] <- as.Date(as.character(unlist(wf[,2])),"%m/%d/%Y")
 wf[,1] <- as.character(unlist(wf[,1]))
 
+#https://www.r-bloggers.com/its-time/
 ## Graph1 - line
-ggplot(wf,aes(date,value)) + geom_line()
+ggplot(wf,aes(date,value,col='blue')) + geom_line() + scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
+            ylab("Dollar Index") + xlab("")
