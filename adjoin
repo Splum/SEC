@@ -11,3 +11,31 @@ df$Date <- as.Date(df[,1],"%d-%b-%y")
 df <- df[,c(ncol(df), 1:(ncol(df)-1))] # move last column data to the first
 SETprice <- df
 # a <- t(df)
+
+df <- read.csv(file="maipe.csv", head=F, stringsAsFactors=F)
+# dealing with name
+namae <- df[1,]
+namae <- gsub("'","", gsub(" TB Equity", "", df[1,]))
+colnames(df) = namae # set column names #
+df <- df[-1,]
+# t(SETprice) # transpose
+df[,c(2:ncol(df))] <- as.numeric(as.matrix(df[,c(2:ncol(df))]))
+df[is.na(df)] <- 0
+df$Date <- as.Date(df[,1],"%d-%b-%y")
+df <- df[,c(ncol(df), 1:(ncol(df)-1))] # move last column data to the first
+df$month <- as.Date(cut(df$Date, breaks = "month"))
+maipe <- df
+
+# a <- t(df)
+ 
+#empthy <- data.frame(Date=as.Date(character()),
+#                     security = character(),
+#                     PE = numeric(),
+#                     stringsAsFactors=F)
+maipe <- maipe[,-2]
+mmaipe <- melt(maipe,id=c("Date","month"),na.rm=T)
+# same structured file 
+a <- dcast(mmaipe,formula = Date ~ variable)
+#a <- dcast(mmapie,formula = Date + subject ~ variable)
+mydata <- merge(MAI,m, by.x = c("Date","security"),
+                by.y = c("Date","varaible"), all=T)
