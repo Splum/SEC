@@ -20,9 +20,9 @@ colnames(df) = namae # set column names #
 df <- df[-1,]
 # t(SETprice) # transpose
 df[,c(2:ncol(df))] <- as.numeric(as.matrix(df[,c(2:ncol(df))]))
-df[is.na(df)] <- 0
+#df[is.na(df)] <- 0
 df$Date <- as.Date(df[,1],"%d-%b-%y")
-df <- df[,c(ncol(df), 1:(ncol(df)-1))] # move last column data to the first
+#df <- df[,c(ncol(df), 1:(ncol(df)-1))] # move last column data to the first
 df$month <- as.Date(cut(df$Date, breaks = "month"))
 maipe <- df
 
@@ -32,7 +32,7 @@ maipe <- df
 #                     security = character(),
 #                     PE = numeric(),
 #                     stringsAsFactors=F)
-maipe <- maipe[,-2]
+maipe <- maipe[,-1]
 mmaipe <- melt(maipe,id=c("Date","month"),na.rm=T)
 # same structured file 
 a <- dcast(mmaipe,formula = Date ~ variable)
