@@ -1,18 +1,12 @@
-df <- read.csv(file="SETprice.csv", head=F, stringsAsFactors=F)
-# dealing with name
-namae <- df[1,]
-namae <- gsub("'","", gsub(" TB Equity", "", df[1,]))
-colnames(df) = namae # set column names #
-df <- df[-1,]
-# t(SETprice) # transpose
-df[,c(2:ncol(df))] <- as.numeric(as.matrix(df[,c(2:ncol(df))]))
-df[is.na(df)] <- 0
-df$Date <- as.Date(df[,1],"%d-%b-%y")
-df <- df[,c(ncol(df), 1:(ncol(df)-1))] # move last column data to the first
-SETprice <- df
-# a <- t(df)
-
-df <- read.csv(file="maipe.csv", head=F, stringsAsFactors=F)
+library(readxl)
+library(dplyr)
+library(reshape2)
+library(ggplot2)
+################################################
+#######            Read file             #######
+################################################
+####### price file
+df <- read.csv(file="maiprice.csv", head=F, stringsAsFactors=F)
 # dealing with name
 namae <- df[1,]
 namae <- gsub("'","", gsub(" TB Equity", "", df[1,]))
@@ -24,18 +18,45 @@ df[,c(2:ncol(df))] <- as.numeric(as.matrix(df[,c(2:ncol(df))]))
 df$Date <- as.Date(df[,1],"%d-%b-%y")
 #df <- df[,c(ncol(df), 1:(ncol(df)-1))] # move last column data to the first
 df$month <- as.Date(cut(df$Date, breaks = "month"))
-maipe <- df
-
+maiprice <- df
+maiprice$m <- format(as.Date(maiprice[,1], format="%d-%b-%y"),"%d/%m")
 # a <- t(df)
  
 #empthy <- data.frame(Date=as.Date(character()),
 #                     security = character(),
 #                     PE = numeric(),
 #                     stringsAsFactors=F)
-maipe <- maipe[,-1]
-mmaipe <- melt(maipe,id=c("Date","month"),na.rm=T)
+maiprice <- maiprice[,-1]
+mmaiprice <- melt(maiprice,id=c("Date","month","m"),na.rm=T)
+mmaiprice[,4] <- as.character(unlist(mmaiprice[,4])) # convert factor to character
 # same structured file 
 a <- dcast(mmaipe,formula = Date ~ variable)
+######### use a, and don't forget to remove CHEWA.1 and GTB.1
 #a <- dcast(mmapie,formula = Date + subject ~ variable)
-mydata <- merge(MAI,m, by.x = c("Date","security"),
-                by.y = c("Date","varaible"), all=T)
+## Rename column and Merge ##
+names(mmaipe)[4] <- paste("security")
+mydata <- merge(MAI,mmaipe, by=c("m","security"), all=T)
+
+mydata <- merge(MAI,mmaipe, by.x = c("m","security"),
+                by.y = c("m","varaible"), all=T)
+## Subset specific date & PEvalue
+Feb6 <- subset(mmaipe, Date == as.Date("2017-02-06"))
+Dec30 <- subset(mmaipe, Date == as.Date("2016-12-30"))
+Jan31 <- subset(mmaipe, Date == as.Date("2017-01-31"))
+data$PEgroup<-ifelse(data$PE<=20,1,
+                  ifelse(data$PE>20 & data$PE <=40,2,
+                  ifelse(data$PE>40 & data$PE <=60,3,
+                  ifelse(data$PE>60 & data$PE <=80,4,
+                  ifelse(data$PE>80 & data$PE <=100,5,
+                  ifelse(data$PE>100,6,0))))))
+#https://www.r-bloggers.com/for-loops-and-how-to-avoid-them/
+data$PEgroup[is.na(data$PEgroup)] <- 0      ## if PE = NA, assign 0.
+clean <- filter(data,!(data$price ==0))                  
+a <- aggregate(price ~ PEgroup, clean, FUN=median, na.rm=T)
+#a <- aggregate( df[,5:6], df[,7], FUN = mean, na.rm=T )
+
+## GRAPH * plot
+g <- ggplot(maiFeb6, aes(PE,price))
+g + geom_point() + xlim(0,100) + geom_smooth(method="lm")
+
+##
