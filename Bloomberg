@@ -21,3 +21,23 @@ wf[,1] <- as.character(unlist(wf[,1]))
 ## Graph1 - line
 ggplot(wf,aes(date,value,col='blue')) + geom_line() + scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
             ylab("Dollar Index") + xlab("")
+
+#################### How to fill in missing date... optional from merge data ###########################
+## First make up some mock data
+my_data <- data.frame(date = seq(as.Date("2010-01-01"), as.Date("2015-12-31"), 
+                                by = "1 month"), 
+                     value = rnorm(72))
+
+## Remove some observations so we have an incomplete data set
+my_incomplete_data <- my_data[sort(sample(nrow(my_data), 60)), ]
+
+## Make a data frame with a full series of dates from the min date to the max date
+## in the incomplete data frame
+full_dates <- seq(min(my_incomplete_data$date), max(my_incomplete_data$date), 
+                  by = "1 month")
+full_dates <- data.frame(date = full_dates)
+
+## Merge the complete data frame with the incomplete to fill in the dates and add 
+## NAs for missing values
+my_complete_data <- merge(full_dates, my_incomplete_data, by = "date", 
+                          all.x = TRUE)
