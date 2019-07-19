@@ -2,6 +2,7 @@ setwd("C:/Users/sasipen/Desktop/R")
 library(readxl)
 library(dplyr)
 library(reshape2)
+library(haven) #for SPSS data read#
 
 ## open the file ##
 con <- file("macro1.txt", open="r")
